@@ -4,11 +4,11 @@ import os
 from io import BytesIO
 
 #Set up our app
-st.set_page_config(page_title="Data Sweeper", layout="wide")
-st.title("Data Sweeper")
-st.write("Transform your files between CSV and Excek formats with built-in data cleaning and visualization!")
+st.set_page_config(page_title="📊 Smart Data Processor", layout="wide")
+st.title("🛠️ Data Refinery")
+st.write("Easily convert, clean, and visualize your CSV and Excel files for better insights. 📈")
 
-uploaded_files = st.file_uploader("Upload your files (CSV or Excel): ", type=["csv","xlsx"], accept_multiple_files=True )
+uploaded_files = st.file_uploader("📂 Drag & drop or select your CSV/Excel files:", type=["csv","xlsx"], accept_multiple_files=True )
 
 if uploaded_files:
     for file in uploaded_files:
@@ -19,41 +19,41 @@ if uploaded_files:
         elif file_extension == ".xlsx":
             df = pd.read_excel(file)
         else:
-            st.error("Unsupported file format. Please upload a CSV or Excel file.")
+            st.error("⚠️ Unsupported format detected! Please provide a valid CSV or Excel file.")
             continue
         #Display info about the file
-        st.write(f"**File Name:** {file.name}")
-        st.write(f"**File Size:** {file.size/1024}")
+        st.write(f"📝 Filename: {file.name}")
+        st.write(f"📏 Size:  {file.size/1024}")
 
         #Show five rows of our dataframe
-        st.write("Preview the Head of the Dataframe")
+        st.write("👀 Data Snapshot")
         st.dataframe(df.head())
 
         #Options for Data Cleaning
-        st.subheader("Data Cleaning Options")
+        st.subheader("🛠️ Clean & Optimize Data")
         if st.checkbox(f"Clean Data for {file.name}"):
             col1,col2 = st.columns(2)
 
             with col1:
-                if st.button(f"Remove Duplicates from {file.name}"):
+                if st.button(f"🗑️ Deduplicate {file.name}"):
                     df.drop_duplicates(inplace=True)
-                    st.success("Duplicates removed from.")
+                    st.success("✅ Duplicate entries successfully removed!")
             with col2:
-                if st.button(f"Fill Missing Values for {file.name}"):
+                if st.button(f"📉 Fill Missing Data in {file.name}"):
                     numeric_cols = df.select_dtypes(include=['number']).columns
                     df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
-                    st.success("Missing values have been filled.") 
-        st.subheader("Select Columns to Convert")
+                    st.success("✅ Missing values filled using column-wise mean.") 
+        st.subheader("🎯 Choose Columns for Processing")
         columns = st.multiselect(f"Choose Columns for {file.name}", df.columns, default=df.columns)
         df = df[columns]
         #Create some visualisation
-        st.subheader("Data Visualization")
-        if st.checkbox(f"Show visualization for {file.name}"):
+        st.subheader("📈 Visualize Your Data")
+        if st.checkbox(f"📊 Enable Graphs for {file.name}"):
             st.bar_chart(df.select_dtypes(include='number').iloc[:,:2])
 
         #Covert the file CSV to Excel
-        st.subheader("Conversion Options")
-        conversion_type = st.radio(f"Convert {file.name} to: ",["CSV", "Excel"], key=file.name)
+        st.subheader("🔄 Convert File Format")
+        conversion_type = st.radio(f"🛠️ Choose Output Format for {file.name} to: ",["CSV", "Excel"], key=file.name)
         if st.button(f"Convert {file.name}"):
             buffer = BytesIO()
             if conversion_type == "CSV":
@@ -68,13 +68,13 @@ if uploaded_files:
 
             #Download Button
             st.download_button(
-                label=f"Download {file_name} as {conversion_type}",
+                label=f"📥 Download {file_name} as {conversion_type}",
                 data=buffer,
                 file_name=file_name,
                 mime=mime_type
             )
 
-            st.success("All files processed")
+            st.success("🎉 Processing complete!")
 
 
 
